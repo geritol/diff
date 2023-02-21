@@ -49,6 +49,10 @@ type embedstruct struct {
 	Baz bool `diff:"baz"`
 }
 
+type nestedstruct struct {
+	nested tmstruct
+}
+
 type customTagStruct struct {
 	Foo string `json:"foo"`
 	Bar int    `json:"bar"`
@@ -567,6 +571,15 @@ func TestDiff(t *testing.T) {
 				diff.Change{Type: diff.UPDATE, Path: []string{"foo"}, From: "a", To: "b"},
 				diff.Change{Type: diff.UPDATE, Path: []string{"bar"}, From: 2, To: 3},
 				diff.Change{Type: diff.UPDATE, Path: []string{"baz"}, From: true, To: false},
+			},
+			nil,
+		},
+		{
+			"nested-struct-field",
+			nestedstruct{tmstruct{Foo: "a"}},
+			nestedstruct{tmstruct{Foo: "b"}},
+			diff.Changelog{
+				diff.Change{Type: diff.UPDATE, Path: []string{"nested", "Foo"}, From: "a", To: "b"},
 			},
 			nil,
 		},
